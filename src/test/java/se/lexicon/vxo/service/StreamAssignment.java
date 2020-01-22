@@ -326,14 +326,20 @@ public class StreamAssignment {
         LocalDate[] _2020_dates = null;
 
         //Write code here
-//        _2020_dates = Stream
-//                .iterate(LocalDate.ofYearDay(2020,1), localDate -> localDate.isBefore(LocalDate.of(2021, 1,1)), localDate -> localDate.plusDays(1))
-//                .toArray(i -> new LocalDate[i]);
+                _2020_dates = Stream.iterate(LocalDate.of(2020,1,1),localDate ->localDate.plusDays(1))
+                .limit(366)
+                .toArray(LocalDate[]::new);
 
+//Java v.11?:
 //        _2020_dates = Stream.iterate(
-//                LocalDate.of(2020,1,1),localDate -> localDate.isBefore(LocalDate.of(2021,1,1))
+//                LocalDate.of(2020,1,1)
+//                ,localDate -> localDate.isBefore(LocalDate.of(2021,1,1))
 //                ,localDate -> localDate.plusDays(1))
 //                .toArray(LocalDate[]::new);
+
+            System.out.println("Expected length: " + 366);
+            System.out.println("Actual length: " + _2020_dates.length);
+
 
         assertNotNull(_2020_dates);
         assertEquals(366, _2020_dates.length);
