@@ -4,12 +4,19 @@ import org.junit.jupiter.api.Test;
 import se.lexicon.vxo.model.Gender;
 import se.lexicon.vxo.model.Person;
 import se.lexicon.vxo.model.PersonDto;
+import sun.invoke.empty.Empty;
+import sun.reflect.generics.tree.Tree;
 
+import javax.print.attribute.IntegerSyntax;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,13 +33,18 @@ public class StreamAssignment {
 
     /**
      * Turn integers into a stream then use forEach as a terminal operation to print out the numbers
+     *
+     * Erik;
+     * 1) På de flesta uppgifterna hag jag valt att skriva ut till console, för min egen skull - jag ville se resultatet.
+     * 2) I ärlighetens namn; ang. uppgifterna 10-14 har jag kollat på hur andra i klassen gjort och försökt förstå koden.
+     *
      */
     @Test
     public void task1(){
         List<Integer> integers = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
-
         //Write code here
-
+        integers.stream()
+                .forEach(System.out::println);
     }
 
     /**
@@ -41,8 +53,13 @@ public class StreamAssignment {
     @Test
     public void task2(){
         long amount = 0;
-
         //Write code here
+        List<Person> personList = people.stream()
+                .collect(Collectors.toList());
+
+        amount= personList.stream().count();
+
+        System.out.println("Number of people: " + amount);
 
         assertEquals(10000, amount);
     }
@@ -56,8 +73,15 @@ public class StreamAssignment {
         int expected = 90;
 
         //Write code here
+        List<Person> allAnderssons = people.stream()
+                .filter(person -> person.getLastName().equalsIgnoreCase("Andersson"))
+                .collect(Collectors.toList());
+        amount = allAnderssons.stream().count();
+
+        System.out.println("Number of people with last name 'Andersson': " + amount);
 
         assertEquals(expected, amount);
+
     }
 
     /**
@@ -69,6 +93,12 @@ public class StreamAssignment {
         List<Person> females = null;
 
         //Write code here
+        females = people.stream()
+                .filter(person -> person.getGender().equals(Gender.FEMALE))
+                .collect(Collectors.toList());
+
+        System.out.println("Expected number of Females: " + expectedSize);
+        System.out.println("Actual number of Females: " + females.size());
 
         assertNotNull(females);
         assertEquals(expectedSize, females.size());
@@ -83,6 +113,12 @@ public class StreamAssignment {
         Set<LocalDate> dates = null;
 
         //Write code here
+        dates = people.stream()
+                .map(person -> person.getDateOfBirth())
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        System.out.println("Expected number of birthDates: " + expectedSize);
+        System.out.println("Actual number of birthDates: " + dates.size());
 
         assertNotNull(dates);
         assertEquals(expectedSize, dates.size());
@@ -98,6 +134,14 @@ public class StreamAssignment {
         Person[] result = null;
 
         //Write code here
+        result = people.stream()
+                .filter(person -> person.getFirstName().equalsIgnoreCase("Erik"))
+                .toArray(Person[]::new);
+
+        for(int i=0;i<result.length;i++){
+            System.out.println(result[i]);
+        }
+        System.out.println("\nLength of 'result' array: " + result.length);
 
         assertNotNull(result);
         assertEquals(expectedLength, result.length);
@@ -113,6 +157,11 @@ public class StreamAssignment {
         Optional<Person> optional = null;
 
         //Write code here
+        optional = people.stream()
+                .filter(person -> person.getPersonId() == 5436)
+                .findFirst();
+
+        System.out.println(optional.get());
 
         assertNotNull(optional);
         assertTrue(optional.isPresent());
@@ -129,6 +178,11 @@ public class StreamAssignment {
         Optional<Person> optional = null;
 
         //Write code here
+        optional = people.stream()
+                .min(Comparator.comparing(Person::getDateOfBirth));
+
+        System.out.println("Result of optional: " + optional.get().getFirstName() +" " + optional.get().getLastName()
+                + ", born " + optional.get().getDateOfBirth());
 
         assertNotNull(optional);
         assertEquals(expectedBirthDate, optional.get().getDateOfBirth());
@@ -145,6 +199,13 @@ public class StreamAssignment {
         List<PersonDto> dtoList = null;
 
         //Write code here
+        dtoList = people.stream()
+                .filter(person -> person.getDateOfBirth().isBefore(date))
+                .map(person -> new PersonDto(person.getPersonId(), person.getFirstName() + " " + person.getLastName()  + " " + person.getDateOfBirth()))
+                .collect(Collectors.toList());
+
+        System.out.println("Expected size of list: " + " " + expectedSize);
+        System.out.println("Actual size of list: " + dtoList.size());
 
         assertNotNull(dtoList);
         assertEquals(expectedSize, dtoList.size());
@@ -162,6 +223,13 @@ public class StreamAssignment {
         Optional<String> optional = null;
 
         //Write code here
+        optional = people.stream()
+                .filter(person -> person.getPersonId() == personId)
+                .map(person -> person.getDateOfBirth().format((DateTimeFormatter.ofPattern("eeee dd MMMM YYYY"))).toUpperCase())
+                .findFirst();
+
+        System.out.println("Expected String: " + " " + expected);
+        System.out.println("Actual String: " + optional.get() + " (det blir 'ONSDAG' ist f 'WEDNESDAY'?!)");
 
         assertNotNull(optional);
         assertTrue(optional.isPresent());
@@ -180,6 +248,12 @@ public class StreamAssignment {
         double averageAge = 0;
 
         //Write code here
+        averageAge = people.stream()
+                .mapToInt(person -> personToAge.applyAsInt(person))
+                .average().getAsDouble();
+
+        System.out.println("Expected average age: " + expected);
+        System.out.println("Actual average age: " + averageAge);
 
         assertTrue(averageAge > 0);
         assertEquals(expected, averageAge, .01);
@@ -195,6 +269,31 @@ public class StreamAssignment {
         String[] result = null;
 
         //Write code here
+        result = people.stream()
+                .filter(person -> person.getFirstName().equalsIgnoreCase(new StringBuilder(person.getFirstName()).reverse().toString()))
+                .map(Person::getFirstName)
+                .distinct()
+                .sorted()
+                .toArray(String[]::new);
+
+        //Expected names
+        for(int i = 0;i<result.length; i++){
+            if(i==0){
+                System.out.print("Expected names: " + result[i]);
+            }
+            System.out.print(", " + result[i]);
+        }
+        System.out.println("\nExpected length: " + expected.length);
+
+        //Actual names
+        for(int i = 0;i<result.length; i++){
+            if(i==0){
+                System.out.print("\nActual names: " + expected[i]);
+            }
+            System.out.print(", " + expected[i]);
+        }
+        System.out.println("\nActual length: " + expected.length);
+
 
         assertNotNull(result);
         assertArrayEquals(expected, result);
@@ -209,6 +308,11 @@ public class StreamAssignment {
         Map<String, List<Person>> personMap = null;
 
         //Write code here
+        personMap = people.stream()
+                .collect(Collectors.groupingBy(Person::getLastName));
+
+        System.out.println("Expected size: " + expectedSize);
+        System.out.println("Actual size: " + personMap.size());
 
         assertNotNull(personMap);
         assertEquals(expectedSize, personMap.size());
@@ -222,12 +326,20 @@ public class StreamAssignment {
         LocalDate[] _2020_dates = null;
 
         //Write code here
+//        _2020_dates = Stream
+//                .iterate(LocalDate.ofYearDay(2020,1), localDate -> localDate.isBefore(LocalDate.of(2021, 1,1)), localDate -> localDate.plusDays(1))
+//                .toArray(i -> new LocalDate[i]);
 
+//        _2020_dates = Stream.iterate(
+//                LocalDate.of(2020,1,1),localDate -> localDate.isBefore(LocalDate.of(2021,1,1))
+//                ,localDate -> localDate.plusDays(1))
+//                .toArray(LocalDate[]::new);
 
         assertNotNull(_2020_dates);
         assertEquals(366, _2020_dates.length);
         assertEquals(LocalDate.parse("2020-01-01"), _2020_dates[0]);
         assertEquals(LocalDate.parse("2020-12-31"), _2020_dates[_2020_dates.length-1]);
     }
+
 
 }
