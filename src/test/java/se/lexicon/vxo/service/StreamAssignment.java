@@ -81,7 +81,6 @@ public class StreamAssignment {
                 .collect(Collectors.toList());
         amount = allAnderssons.stream().count();
 
-
         System.out.println("Expected number of people with last name 'Andersson': " + expected);
         System.out.println("Number of people with last name 'Andersson': " + amount);
 
@@ -139,7 +138,6 @@ public class StreamAssignment {
     @Test
     public void task6(){
         int expectedLength = 3;
-
         Person[] result = null;
 
         //Write code here
@@ -195,6 +193,10 @@ public class StreamAssignment {
         System.out.println("Result of optional: " + optional.get().getFirstName() +" " + optional.get().getLastName()
                 + ", born " + optional.get().getDateOfBirth());
 
+        if (optional.isPresent()){
+            System.out.println(optional);
+        }
+
         assertNotNull(optional);
         assertEquals(expectedBirthDate, optional.get().getDateOfBirth());
     }
@@ -211,12 +213,16 @@ public class StreamAssignment {
 
         //Write code here
         dtoList = people.stream()
-                .filter(person -> person.getDateOfBirth().isBefore(date))
-                .map(person -> new PersonDto(person.getPersonId(), person.getFirstName() + " " + person.getLastName()  + " " + person.getDateOfBirth()))
-                .collect(Collectors.toList());
+            .filter(person -> person.getDateOfBirth().isBefore(date))
+            .map(person -> new PersonDto(person.getPersonId(), person.getFirstName() + " " + person.getLastName()  + " " + person.getDateOfBirth()))
+            .collect(Collectors.toList());
 
-        System.out.println("Expected size of list: " + " " + expectedSize);
-        System.out.println("Actual size of list: " + dtoList.size());
+        System.out.println("Expected size of list: " + expectedSize);
+        System.out.println("Actual size of list: " + dtoList.size() + "\n");
+
+        for(int i = 0; i<dtoList.size(); i++){
+            System.out.println(dtoList.get(i).getFullName());
+        }
 
         assertNotNull(dtoList);
         assertEquals(expectedSize, dtoList.size());
@@ -234,13 +240,14 @@ public class StreamAssignment {
         Optional<String> optional = null;
 
         //Write code here
+        //Först fick jag bara 'ONSDAG' ist f 'WEDNESDAY' men till slut blev det rätt, med "Locale.ENGLISH"
         optional = people.stream()
                 .filter(person -> person.getPersonId() == personId)
-                .map(person -> person.getDateOfBirth().format((DateTimeFormatter.ofPattern("eeee dd MMMM YYYY"))).toUpperCase())
+                .map(person -> person.getDateOfBirth().format((DateTimeFormatter.ofPattern("eeee dd MMMM YYYY", Locale.ENGLISH))).toUpperCase())
                 .findFirst();
 
         System.out.println("Expected String: " + " " + expected);
-        System.out.println("Actual String: " + optional.get() + " (det blir 'ONSDAG' ist f 'WEDNESDAY'?!)");
+        System.out.println("Actual String: " + optional.get());
 
         assertNotNull(optional);
         assertTrue(optional.isPresent());
@@ -287,23 +294,24 @@ public class StreamAssignment {
                 .sorted()
                 .toArray(String[]::new);
 
-        //Expected names
-        for(int i = 0;i<result.length; i++){
+        //Expected names ---------------------------------------------
+        for(int i = 0;i<expected.length; i++){
             if(i==0){
-                System.out.print("Expected names: " + result[i]);
-            }
-            System.out.print(", " + result[i]);
-        }
-        System.out.println("\nExpected length: " + expected.length);
-
-        //Actual names
-        for(int i = 0;i<result.length; i++){
-            if(i==0){
-                System.out.print("\nActual names: " + expected[i]);
+                System.out.print("Expected names: " + expected[i]);
             }
             System.out.print(", " + expected[i]);
         }
-        System.out.println("\nActual length: " + expected.length);
+        System.out.println("\nExpected length: " + expected.length);
+
+
+        //Result names ------------------------------------------------
+        for(int i = 0;i<result.length; i++){
+            if(i==0){
+                System.out.print("\nResult names: " + result[i]);
+            }
+            System.out.print(", " + result[i]);
+        }
+        System.out.println("\nResult length: " + result.length);
 
 
         assertNotNull(result);
@@ -323,7 +331,7 @@ public class StreamAssignment {
                 .collect(Collectors.groupingBy(Person::getLastName));
 
         System.out.println("Expected size: " + expectedSize);
-        System.out.println("Actual size: " + personMap.size());
+        System.out.println("personMap size: " + personMap.size());
 
         assertNotNull(personMap);
         assertEquals(expectedSize, personMap.size());
@@ -337,11 +345,10 @@ public class StreamAssignment {
         LocalDate[] _2020_dates = null;
 
         //Write code here
-                _2020_dates = Stream.iterate(LocalDate.of(2020,1,1),localDate ->localDate.plusDays(1))
-                .limit(366)
+                _2020_dates = Stream.iterate(LocalDate.of(2020,1,1),localDate -> localDate.plusDays(1)).limit(366)
                 .toArray(LocalDate[]::new);
 
-//Java v.11?:
+//Java v.11? (detta fungerar inte i min version):
 //        _2020_dates = Stream.iterate(
 //                LocalDate.of(2020,1,1)
 //                ,localDate -> localDate.isBefore(LocalDate.of(2021,1,1))
