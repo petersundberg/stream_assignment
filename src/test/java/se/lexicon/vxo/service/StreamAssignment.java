@@ -49,10 +49,16 @@ public class StreamAssignment {
     public void task2(){
         long amount = 0;
         //Write code here
-        List<Person> personList = people.stream()
+//Först gjorde jag denna kod, men varför måste jag först skapa en personList?
+//        List<Person> personList = people.stream()
+//                .collect(Collectors.toList());
+//        amount= personList.stream().count();
+
+//Denna verkar också fungera ...:
+        people.stream()
                 .collect(Collectors.toList());
 
-        amount= personList.stream().count();
+        amount= people.stream().count();
 
 
         System.out.println("Number of people: " + amount);
@@ -69,11 +75,14 @@ public class StreamAssignment {
         int expected = 90;
 
         //Write code here
-        List<Person> allAnderssons = people.stream()
+        List<Person> allAnderssons = null;
+        allAnderssons = people.stream()
                 .filter(person -> person.getLastName().equalsIgnoreCase("Andersson"))
                 .collect(Collectors.toList());
         amount = allAnderssons.stream().count();
 
+
+        System.out.println("Expected number of people with last name 'Andersson': " + expected);
         System.out.println("Number of people with last name 'Andersson': " + amount);
 
         assertEquals(expected, amount);
@@ -94,7 +103,11 @@ public class StreamAssignment {
                 .collect(Collectors.toList());
 
         System.out.println("Expected number of Females: " + expectedSize);
-        System.out.println("Actual number of Females: " + females.size());
+        System.out.println("Actual number of Females: " + females.size()+"\n");
+
+        for(int i=0;i<females.size(); i++){
+            System.out.println(females.get(i).getFirstName() + " " + females.get(i).getLastName());
+        }
 
         assertNotNull(females);
         assertEquals(expectedSize, females.size());
@@ -134,10 +147,12 @@ public class StreamAssignment {
                 .filter(person -> person.getFirstName().equalsIgnoreCase("Erik"))
                 .toArray(Person[]::new);
 
+        System.out.println("Expected length of array: " + expectedLength);
+        System.out.println("Length of 'result' array: " + result.length +"\n");
+
         for(int i=0;i<result.length;i++){
             System.out.println(result[i]);
         }
-        System.out.println("\nLength of 'result' array: " + result.length);
 
         assertNotNull(result);
         assertEquals(expectedLength, result.length);
