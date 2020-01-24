@@ -33,11 +33,6 @@ public class StreamAssignment {
 
     /**
      * Turn integers into a stream then use forEach as a terminal operation to print out the numbers
-     *
-     * Erik;
-     * 1) På de flesta uppgifterna hag jag valt att skriva ut till console, för min egen skull - jag ville se resultatet.
-     * 2) I ärlighetens namn; ang. uppgifterna 10-14 har jag kollat på hur andra i klassen gjort och försökt förstå koden.
-     *
      */
     @Test
     public void task1(){
@@ -58,6 +53,7 @@ public class StreamAssignment {
                 .collect(Collectors.toList());
 
         amount= personList.stream().count();
+
 
         System.out.println("Number of people: " + amount);
 
